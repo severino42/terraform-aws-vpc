@@ -836,6 +836,26 @@ resource "aws_route_table_association" "intra" {
   route_table_id = element(aws_route_table.intra[*].id, 0)
 }
 
+resource "aws_route" "intra_internet_gateway" {
+  count = local.create_intra_subnets && var.create_igw ? 1 : 0
+
+  route_table_id         = aws_route_table.intra[0].id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.this[0].id
+
+  timeouts {
+    create = "5m"
+  }
+}
+
+resource "aws_route" "intra_internet_gateway_ipv6" {
+  count = local.create_intra_subnets && var.create_igw && var.enable_ipv6 ? 1 : 0
+
+  route_table_id              = aws_route_table.public[0].id
+  destination_ipv6_cidr_block = "::/0"
+  gateway_id                  = aws_internet_gateway.this[0].id
+}
+
 ################################################################################
 # Intra Network ACLs
 ################################################################################
@@ -938,6 +958,8 @@ resource "aws_route_table_association" "outpost" {
   )
 }
 
+
+
 ################################################################################
 # Outpost Network ACLs
 ################################################################################
@@ -998,7 +1020,7 @@ resource "aws_network_acl_rule" "outpost_outbound" {
 ################################################################################
 
 resource "aws_internet_gateway" "this" {
-  count = local.create_public_subnets && var.create_igw ? 1 : 0
+  count = local.create_intra_subnets && var.create_igw ? 1 : 0
 
   vpc_id = local.vpc_id
 
@@ -1065,7 +1087,7 @@ resource "aws_nat_gateway" "this" {
     var.single_nat_gateway ? 0 : count.index,
   )
   subnet_id = element(
-    aws_subnet.public[*].id,
+    aws_subnet.intra[*].id,
     var.single_nat_gateway ? 0 : count.index,
   )
 
@@ -1086,7 +1108,7 @@ resource "aws_nat_gateway" "this" {
 resource "aws_route" "private_nat_gateway" {
   count = local.create_vpc && var.enable_nat_gateway ? local.nat_gateway_count : 0
 
-  route_table_id         = element(aws_route_table.private[*].id, count.index)
+  route_table_id         = element(aws_route_table.intra[*].id, count.index)
   destination_cidr_block = var.nat_gateway_destination_cidr_block
   nat_gateway_id         = element(aws_nat_gateway.this[*].id, count.index)
 
@@ -1221,8 +1243,8 @@ resource "aws_default_security_group" "this" {
       prefix_list_ids  = compact(split(",", lookup(ingress.value, "prefix_list_ids", "")))
       security_groups  = compact(split(",", lookup(ingress.value, "security_groups", "")))
       description      = lookup(ingress.value, "description", null)
-      from_port        = lookup(ingress.value, "from_port", 0)
-      to_port          = lookup(ingress.value, "to_port", 0)
+      from_port        = lookup(ingress.value, "from_port", 443)
+      to_port          = lookup(ingress.value, "to_port", 443)
       protocol         = lookup(ingress.value, "protocol", "-1")
     }
   }
@@ -1236,8 +1258,8 @@ resource "aws_default_security_group" "this" {
       prefix_list_ids  = compact(split(",", lookup(egress.value, "prefix_list_ids", "")))
       security_groups  = compact(split(",", lookup(egress.value, "security_groups", "")))
       description      = lookup(egress.value, "description", null)
-      from_port        = lookup(egress.value, "from_port", 0)
-      to_port          = lookup(egress.value, "to_port", 0)
+      from_port        = lookup(egress.value, "from_port", 443)
+      to_port          = lookup(egress.value, "to_port", 443)
       protocol         = lookup(egress.value, "protocol", "-1")
     }
   }

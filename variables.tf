@@ -267,10 +267,10 @@ variable "public_inbound_acl_rules" {
     {
       rule_number = 100
       rule_action = "allow"
-      from_port   = 0
-      to_port     = 0
+      from_port   = 443
+      to_port     = 443
       protocol    = "-1"
-      cidr_block  = "0.0.0.0/0"
+      cidr_block  = "0.0.0.0/0" #ISCINTERNAL CIDR
     },
   ]
 }
@@ -282,10 +282,10 @@ variable "public_outbound_acl_rules" {
     {
       rule_number = 100
       rule_action = "allow"
-      from_port   = 0
-      to_port     = 0
+      from_port   = 443
+      to_port     = 443
       protocol    = "-1"
-      cidr_block  = "0.0.0.0/0"
+      cidr_block  = "0.0.0.0/0" #ISCINTERNAL CIDR
     },
   ]
 }
@@ -398,7 +398,7 @@ variable "private_inbound_acl_rules" {
       from_port   = 0
       to_port     = 0
       protocol    = "-1"
-      cidr_block  = "0.0.0.0/0"
+      cidr_block  = "0.0.0.0/0" #ISCINTERNAL CIDR
     },
   ]
 }
@@ -413,7 +413,7 @@ variable "private_outbound_acl_rules" {
       from_port   = 0
       to_port     = 0
       protocol    = "-1"
-      cidr_block  = "0.0.0.0/0"
+      cidr_block  = "0.0.0.0/0" #ISCINTERNAL CIDR
     },
   ]
 }
@@ -973,10 +973,10 @@ variable "intra_inbound_acl_rules" {
     {
       rule_number = 100
       rule_action = "allow"
-      from_port   = 0
-      to_port     = 0
+      from_port   = 443
+      to_port     = 443
       protocol    = "-1"
-      cidr_block  = "0.0.0.0/0"
+      cidr_block  = "0.0.0.0/0" #ISCINTERNAL CIDR
     },
   ]
 }
@@ -988,10 +988,10 @@ variable "intra_outbound_acl_rules" {
     {
       rule_number = 100
       rule_action = "allow"
-      from_port   = 0
-      to_port     = 0
+      from_port   = 443
+      to_port     = 443
       protocol    = "-1"
-      cidr_block  = "0.0.0.0/0"
+      cidr_block  = "0.0.0.0/0" #ISCINTERNAL CIDR
     },
   ]
 }
@@ -1116,7 +1116,7 @@ variable "outpost_inbound_acl_rules" {
       from_port   = 0
       to_port     = 0
       protocol    = "-1"
-      cidr_block  = "0.0.0.0/0"
+      cidr_block  = "0.0.0.0/0"  #ISCINTERNAL CIDR
     },
   ]
 }
@@ -1131,7 +1131,7 @@ variable "outpost_outbound_acl_rules" {
       from_port   = 0
       to_port     = 0
       protocol    = "-1"
-      cidr_block  = "0.0.0.0/0"
+      cidr_block  = "0.0.0.0/0" #ISCINTERNAL CIDR
     },
   ]
 }
@@ -1374,22 +1374,22 @@ variable "default_network_acl_ingress" {
   description = "List of maps of ingress rules to set on the Default Network ACL"
   type        = list(map(string))
   default = [
-    {
-      rule_no    = 100
-      action     = "allow"
-      from_port  = 0
-      to_port    = 0
-      protocol   = "-1"
-      cidr_block = "0.0.0.0/0"
-    },
-    {
-      rule_no         = 101
-      action          = "allow"
-      from_port       = 0
-      to_port         = 0
-      protocol        = "-1"
-      ipv6_cidr_block = "::/0"
-    },
+  #   {
+  #     rule_no    = 100
+  #     action     = "allow"
+  #     from_port  = 0
+  #     to_port    = 0
+  #     protocol   = "-1"
+  #     cidr_block = "0.0.0.0/0"
+  #   },
+  #   {
+  #     rule_no         = 101
+  #     action          = "allow"
+  #     from_port       = 0
+  #     to_port         = 0
+  #     protocol        = "-1"
+  #     ipv6_cidr_block = "::/0"
+  #   },
   ]
 }
 
@@ -1397,22 +1397,22 @@ variable "default_network_acl_egress" {
   description = "List of maps of egress rules to set on the Default Network ACL"
   type        = list(map(string))
   default = [
-    {
-      rule_no    = 100
-      action     = "allow"
-      from_port  = 0
-      to_port    = 0
-      protocol   = "-1"
-      cidr_block = "0.0.0.0/0"
-    },
-    {
-      rule_no         = 101
-      action          = "allow"
-      from_port       = 0
-      to_port         = 0
-      protocol        = "-1"
-      ipv6_cidr_block = "::/0"
-    },
+    # {
+    #   rule_no    = 100
+    #   action     = "allow"
+    #   from_port  = 0
+    #   to_port    = 0
+    #   protocol   = "-1"
+    #   cidr_block = "0.0.0.0/0"
+    # },
+    # {
+    #   rule_no         = 101
+    #   action          = "allow"
+    #   from_port       = 0
+    #   to_port         = 0
+    #   protocol        = "-1"
+    #   ipv6_cidr_block = "::/0"
+    # },
   ]
 }
 
